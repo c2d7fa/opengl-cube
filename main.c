@@ -1,3 +1,4 @@
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 void render();
@@ -14,6 +15,7 @@ int main() {
   }
 
   glfwMakeContextCurrent(window);
+  glewInit();
 
   while (!glfwWindowShouldClose(window)) {
     render();
