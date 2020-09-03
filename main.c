@@ -5,7 +5,14 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-void render();
+struct context {
+  unsigned int shader_program;
+  unsigned int vao;
+  unsigned int vao_index;
+};
+
+void render(struct context*);
+void initialize(struct context*);
 
 int main() {
   if (!glfwInit()) return 1;
@@ -21,8 +28,11 @@ int main() {
   glfwMakeContextCurrent(window);
   glewInit();
 
+  struct context context;
+  initialize(&context);
+
   while (!glfwWindowShouldClose(window)) {
-    render();
+    render(&context);
 
     glfwSwapBuffers(window);
     glfwPollEvents();
@@ -64,61 +74,57 @@ void compile_shader_from_file(char* path, GLuint shader) {
   free(buffer);
 }
 
-void render() {
+void initialize(struct context* context) {
+  // 0.5^2 + h^2 = 1^2
+  const float x = 0.5;
+  const float height = sqrt(1 * 1 - 0.5 * 0.5);
+  const float y = height / 2;
+
+  // Clockwise from bottom left
+  float vertices[] = {
+    -x, -y, 0,
+    0,  y, 0,
+    x, -y, 0,
+  };
+
+  unsigned int vbo;
+  glGenBuffers(1, &vbo);
+
+  glBindBuffer(GL_ARRAY_BUFFER, vbo);
+  glBufferData(GL_ARRAY_BUFFER, sizeof vertices, vertices, GL_STATIC_DRAW);
+
+  glGenVertexArrays(1, &context->vao);
+
+  glBindVertexArray(context->vao);
+  context->vao_index = 0;
+  glEnableVertexAttribArray(context->vao_index);
+
+  glBindBuffer(GL_ARRAY_BUFFER, vbo);
+  unsigned int va_component_size = 3;
+  GLboolean va_is_normalized = GL_FALSE;
+  unsigned int va_stride = 0;
+  const void* va_start_offset = NULL;
+  glVertexAttribPointer(context->vao_index, va_component_size, GL_FLOAT, va_is_normalized, va_stride, va_start_offset);
+
+  GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
+  compile_shader_from_file("vertex.glsl", vertex_shader);
+  GLuint fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
+  compile_shader_from_file("fragment.glsl", fragment_shader);
+
+  context->shader_program = glCreateProgram();
+  glAttachShader(context->shader_program, vertex_shader);
+  glAttachShader(context->shader_program, fragment_shader);
+  glLinkProgram(context->shader_program);
+}
+
+void render(struct context* context) {
   // Clear
   {
     glClearColor(0.1, 0.12, 0.2, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   }
 
-  // Draw triangle. Centered, equilateral, side length 1.
-  {
-    // 0.5^2 + h^2 = 1^2
-    const float x = 0.5;
-    const float height = sqrt(1 * 1 - 0.5 * 0.5);
-    const float y = height / 2;
-
-    // Clockwise from bottom left
-    float vertices[] = {
-      -x, -y, 0,
-       0,  y, 0,
-       x, -y, 0,
-    };
-
-    // [TODO] We should not be doing most of this every frame!!
-    unsigned int vbo;
-    glGenBuffers(1, &vbo);
-
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof vertices, vertices, GL_STATIC_DRAW);
-
-    unsigned int vao;
-    glGenVertexArrays(1, &vao);
-
-    glBindVertexArray(vao);
-    unsigned int va_index = 0;
-    glEnableVertexAttribArray(va_index);
-
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    unsigned int va_component_size = 3;
-    GLboolean va_is_normalized = GL_FALSE;
-    unsigned int va_stride = 0;
-    const void* va_start_offset = NULL;
-    glVertexAttribPointer(va_index, va_component_size, GL_FLOAT, va_is_normalized, va_stride, va_start_offset);
-
-    GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-    compile_shader_from_file("vertex.glsl", vertex_shader);
-    GLuint fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-    compile_shader_from_file("fragment.glsl", fragment_shader);
-
-    GLuint shader_program = glCreateProgram();
-    glAttachShader(shader_program, vertex_shader);
-    glAttachShader(shader_program, fragment_shader);
-    glLinkProgram(shader_program);
-
-    // Only this is the actual drawing!
-    glUseProgram(shader_program);
-    glBindVertexArray(vao);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-  }
+  glUseProgram(context->shader_program);
+  glBindVertexArray(context->vao);
+  glDrawArrays(GL_TRIANGLES, context->vao_index, 3);
 }
