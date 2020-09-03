@@ -5,6 +5,9 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+// I'm following this tutorial: https://antongerdelan.net/opengl/
+// Reference documentation: https://www.khronos.org/registry/OpenGL-Refpages/gl4/
+
 struct context {
   unsigned int shader_program;
   unsigned int vao;
