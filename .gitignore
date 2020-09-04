@@ -1,1 +1,9 @@
 /main
+
+# I primarily develop this on Linux, so I don't care about Visual Studio's
+# stuff, even the files that you should normally keep in version control.
+/.vs/
+/Debug/
+/x64/Debug/
+/*.sln
+/*.vcxproj*
