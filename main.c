@@ -15,7 +15,7 @@
 struct context {
   unsigned int shader_program;
   unsigned int vao;
-  unsigned int vao_index;
+  unsigned int ebo;
 
   unsigned int blue_uniform_location;
 
@@ -99,39 +99,41 @@ void link_shader_program(unsigned int program) {
     }
 }
 
-const unsigned int vertex_component_size = 3; // Number of floats needed to store each vertex in triangle
-const unsigned int triangles = 2;             // Number of triangles used for cube
+const unsigned int vertex_size = 2; // Number of floats needed to store each vertex in triangle
+const unsigned int triangles = 2;   // Number of triangles rendered
 
 void initialize(struct context* context) {
   float vertices[] = {
-    // Bottom left triangle, clockwise from bottom left
-    -0.5, -0.5, 0.0,
-    -0.5,  0.5, 0.0,
-     0.5, -0.5, 0.0,
-
-    // Top right triangle, clockwise from top left
-    -0.5,  0.5, 0.0,
-     0.5,  0.5, 0.0,
-     0.5, -0.5, 0.0,
+    -0.5, -0.5,
+    -0.5,  0.5,
+     0.5,  0.5,
+     0.5, -0.5,
   };
+
+  unsigned short triangle_indices[] = {
+      0, 1, 2,
+      0, 3, 2,
+  };
+
+  glGenBuffers(1, &context->ebo);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, context->ebo);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof triangle_indices, triangle_indices, GL_STATIC_DRAW);
 
   unsigned int vbo;
   glGenBuffers(1, &vbo);
-
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
   glBufferData(GL_ARRAY_BUFFER, sizeof vertices, vertices, GL_STATIC_DRAW);
 
   glGenVertexArrays(1, &context->vao);
-
   glBindVertexArray(context->vao);
-  context->vao_index = 0;
-  glEnableVertexAttribArray(context->vao_index);
 
+  const int index = 0;
+  glEnableVertexAttribArray(index);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
   GLboolean va_is_normalized = GL_FALSE;
   unsigned int va_stride = 0;
   const void* va_start_offset = NULL;
-  glVertexAttribPointer(context->vao_index, vertex_component_size, GL_FLOAT, va_is_normalized, va_stride, va_start_offset);
+  glVertexAttribPointer(index, vertex_size, GL_FLOAT, va_is_normalized, va_stride, va_start_offset);
 
   GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
   compile_shader_from_file("vertex.glsl", vertex_shader);
@@ -186,7 +188,9 @@ void render(struct context* context) {
   }
 
   glUseProgram(context->shader_program);
-  glBindVertexArray(context->vao);
   glUniform1f(context->blue_uniform_location, fabs(0.5 - animation(4.0)) * 2.0);
-  glDrawArrays(GL_TRIANGLES, context->vao_index, vertex_component_size * triangles);
+
+  glBindVertexArray(context->vao);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, context->ebo);
+  glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_SHORT, NULL);
 }
