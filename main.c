@@ -16,6 +16,8 @@ struct context {
   unsigned int shader_program;
   unsigned int vao;
   unsigned int vao_index;
+
+  GLFWwindow* window;
 };
 
 void render(struct context*);
@@ -33,9 +35,11 @@ int main() {
   }
 
   glfwMakeContextCurrent(window);
+  glfwSwapInterval(0);
   glewInit();
 
   struct context context;
+  context.window = window;
   initialize(&context);
 
   while (!glfwWindowShouldClose(window)) {
@@ -126,7 +130,31 @@ void initialize(struct context* context) {
   glLinkProgram(context->shader_program);
 }
 
+// Based on https://antongerdelan.net/opengl/glcontext2.html
+void update_fps(struct context* context) {
+    // All times in seconds
+
+    static double last_update_time = 0;
+    static int frames_since_last_update = 0;
+
+    double now = glfwGetTime();
+    frames_since_last_update++;
+
+    if (now - last_update_time > 0.25) {
+        double fps = frames_since_last_update / (now - last_update_time);
+
+        char title_buffer[128];
+        sprintf(title_buffer, "Cube (%.1f FPS)", fps);
+        glfwSetWindowTitle(context->window, title_buffer);
+
+        last_update_time = now;
+        frames_since_last_update = 0;
+    }
+}
+
 void render(struct context* context) {
+  update_fps(context);
+
   // Clear
   {
     glClearColor(0.1, 0.12, 0.2, 1);
