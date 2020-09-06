@@ -10,7 +10,7 @@
 #include <GLFW/glfw3.h>
 
 // I'm following this tutorial: https://antongerdelan.net/opengl/
-// Reference documentation: https://www.khronos.org/registry/OpenGL-Refpages/gl4/
+// Reference documentation: https://www.khronos.org/registry/OpenGL-Refpages/gl4/ or https://docs.gl/
 
 struct context {
   unsigned int shader_program;
