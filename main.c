@@ -81,17 +81,20 @@ void compile_shader_from_file(char* path, GLuint shader) {
   free(buffer);
 }
 
-void initialize(struct context* context) {
-  // 0.5^2 + h^2 = 1^2
-  const float x = 0.5;
-  const float height = sqrt(1 * 1 - 0.5 * 0.5);
-  const float y = height / 2;
+const unsigned int vertex_component_size = 3; // Number of floats needed to store each vertex in triangle
+const unsigned int triangles = 2;             // Number of triangles used for cube
 
-  // Clockwise from bottom left
+void initialize(struct context* context) {
   float vertices[] = {
-    -x, -y, 0,
-    0,  y, 0,
-    x, -y, 0,
+    // Bottom left triangle, clockwise from bottom left
+    -0.5, -0.5, 0.0,
+    -0.5,  0.5, 0.0,
+     0.5, -0.5, 0.0,
+
+    // Top right triangle, clockwise from top left
+    -0.5,  0.5, 0.0,
+     0.5,  0.5, 0.0,
+     0.5, -0.5, 0.0,
   };
 
   unsigned int vbo;
@@ -107,11 +110,10 @@ void initialize(struct context* context) {
   glEnableVertexAttribArray(context->vao_index);
 
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  unsigned int va_component_size = 3;
   GLboolean va_is_normalized = GL_FALSE;
   unsigned int va_stride = 0;
   const void* va_start_offset = NULL;
-  glVertexAttribPointer(context->vao_index, va_component_size, GL_FLOAT, va_is_normalized, va_stride, va_start_offset);
+  glVertexAttribPointer(context->vao_index, vertex_component_size, GL_FLOAT, va_is_normalized, va_stride, va_start_offset);
 
   GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
   compile_shader_from_file("vertex.glsl", vertex_shader);
@@ -133,5 +135,5 @@ void render(struct context* context) {
 
   glUseProgram(context->shader_program);
   glBindVertexArray(context->vao);
-  glDrawArrays(GL_TRIANGLES, context->vao_index, 3);
+  glDrawArrays(GL_TRIANGLES, context->vao_index, vertex_component_size * triangles);
 }
