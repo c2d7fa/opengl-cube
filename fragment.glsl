@@ -3,5 +3,6 @@
 out vec4 color;
 
 void main() {
-  color = vec4(0.85, 0.40, 0.55, 0.50);
+  // Note: Square is drawn between (200, 200) and (600, 600).
+  color = vec4((gl_FragCoord.x - 200) / (400 * 2) + 0.5, (gl_FragCoord.y - 200) / (400 * 2) + 0.5, 1 - ((gl_FragCoord.x - 200) / (400 * 3)), 1.0);
 }
