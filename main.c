@@ -87,6 +87,18 @@ void compile_shader_from_file(char* path, GLuint shader) {
   free(buffer);
 }
 
+void link_shader_program(unsigned int program) {
+    glLinkProgram(program);
+
+    int status;
+    glGetProgramiv(program, GL_LINK_STATUS, &status);
+    if (!status) {
+        char* info_buffer = malloc(0x1000);
+        glGetProgramInfoLog(program, 0x1000, NULL, info_buffer);
+        printf("Error linking shader program: %s\n", info_buffer);
+    }
+}
+
 const unsigned int vertex_component_size = 3; // Number of floats needed to store each vertex in triangle
 const unsigned int triangles = 2;             // Number of triangles used for cube
 
@@ -129,7 +141,7 @@ void initialize(struct context* context) {
   context->shader_program = glCreateProgram();
   glAttachShader(context->shader_program, vertex_shader);
   glAttachShader(context->shader_program, fragment_shader);
-  glLinkProgram(context->shader_program);
+  link_shader_program(context->shader_program);
 
   context->blue_uniform_location = glGetUniformLocation(context->shader_program, "blue");
 }
