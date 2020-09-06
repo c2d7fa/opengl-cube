@@ -17,6 +17,8 @@ struct context {
   unsigned int vao;
   unsigned int vao_index;
 
+  unsigned int blue_uniform_location;
+
   GLFWwindow* window;
 };
 
@@ -128,6 +130,8 @@ void initialize(struct context* context) {
   glAttachShader(context->shader_program, vertex_shader);
   glAttachShader(context->shader_program, fragment_shader);
   glLinkProgram(context->shader_program);
+
+  context->blue_uniform_location = glGetUniformLocation(context->shader_program, "blue");
 }
 
 // Based on https://antongerdelan.net/opengl/glcontext2.html
@@ -152,6 +156,14 @@ void update_fps(struct context* context) {
     }
 }
 
+float animation(float duration) {
+    unsigned long int ms_time = glfwGetTime() * 1000;
+    unsigned int ms_duration = duration * 1000;
+    float ms_position = ms_time % ms_duration;
+
+    return ms_position / ms_duration;
+}
+
 void render(struct context* context) {
   update_fps(context);
 
@@ -163,5 +175,6 @@ void render(struct context* context) {
 
   glUseProgram(context->shader_program);
   glBindVertexArray(context->vao);
+  glUniform1f(context->blue_uniform_location, fabs(0.5 - animation(4.0)) * 2.0);
   glDrawArrays(GL_TRIANGLES, context->vao_index, vertex_component_size * triangles);
 }
