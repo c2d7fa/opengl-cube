@@ -9,10 +9,14 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include "matrix.h"
+
 struct context {
   unsigned int shader_program;
   unsigned int vao;
   GLFWwindow* window;
+ 
+  unsigned int uniform_transform;
 };
 
 void render(struct context*);
@@ -155,6 +159,8 @@ void initialize(struct context* context) {
   glAttachShader(context->shader_program, vertex_shader);
   glAttachShader(context->shader_program, fragment_shader);
   link_shader_program(context->shader_program);
+
+  context->uniform_transform = glGetUniformLocation(context->shader_program, "transform");
 }
 
 // Based on https://antongerdelan.net/opengl/glcontext2.html
@@ -179,6 +185,14 @@ void update_fps(struct context* context) {
     }
 }
 
+float animation(float duration) {
+    unsigned long int ms_time = glfwGetTime() * 1000;
+    unsigned int ms_duration = duration * 1000;
+    float ms_position = ms_time % ms_duration;
+
+    return ms_position / ms_duration;
+}
+
 void render(struct context* context) {
   update_fps(context);
 
@@ -189,6 +203,12 @@ void render(struct context* context) {
   }
 
   glUseProgram(context->shader_program);
+
+  const struct mat4f transform = mat4f_multiply(
+      mat4f_rotate_z(2 * pi * animation(4)),
+      mat4f_scale(0.5 + fabs(0.5 - animation(2)) * 2, 1, 1)
+  );
+  glUniformMatrix4fv(context->uniform_transform, 1, GL_FALSE, mat4f_gl(transform));
 
   glBindVertexArray(context->vao);
   glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_SHORT, NULL);
