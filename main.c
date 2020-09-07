@@ -115,6 +115,9 @@ void initialize(struct context* context) {
       0, 3, 2,
   };
 
+  glGenVertexArrays(1, &context->vao);
+  glBindVertexArray(context->vao);
+
   glGenBuffers(1, &context->ebo);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, context->ebo);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof triangle_indices, triangle_indices, GL_STATIC_DRAW);
@@ -124,16 +127,18 @@ void initialize(struct context* context) {
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
   glBufferData(GL_ARRAY_BUFFER, sizeof vertices, vertices, GL_STATIC_DRAW);
 
-  glGenVertexArrays(1, &context->vao);
-  glBindVertexArray(context->vao);
-
   const int index = 0;
-  glEnableVertexAttribArray(index);
-  glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  GLboolean va_is_normalized = GL_FALSE;
-  unsigned int va_stride = 0;
+  const GLboolean va_is_normalized = GL_FALSE;
+  const unsigned int va_stride = 0;
   const void* va_start_offset = NULL;
+  // Note: 'ebo' and 'vbo' are bound.
   glVertexAttribPointer(index, vertex_size, GL_FLOAT, va_is_normalized, va_stride, va_start_offset);
+  glEnableVertexAttribArray(index);
+
+  // Unbind to prevent accidental modification
+  glBindVertexArray(0);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
 
   GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
   compile_shader_from_file("vertex.glsl", vertex_shader);
@@ -191,6 +196,5 @@ void render(struct context* context) {
   glUniform1f(context->blue_uniform_location, fabs(0.5 - animation(4.0)) * 2.0);
 
   glBindVertexArray(context->vao);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, context->ebo);
   glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_SHORT, NULL);
 }
