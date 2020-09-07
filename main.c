@@ -9,16 +9,9 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-// I'm following this tutorial: https://antongerdelan.net/opengl/
-// Reference documentation: https://www.khronos.org/registry/OpenGL-Refpages/gl4/ or https://docs.gl/
-
 struct context {
   unsigned int shader_program;
   unsigned int vao;
-  unsigned int ebo;
-
-  unsigned int blue_uniform_location;
-
   GLFWwindow* window;
 };
 
@@ -127,8 +120,9 @@ void initialize(struct context* context) {
   glGenVertexArrays(1, &context->vao);
   glBindVertexArray(context->vao);
 
-  glGenBuffers(1, &context->ebo);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, context->ebo);
+  unsigned int triangles_ebo;
+  glGenBuffers(1, &triangles_ebo);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, triangles_ebo);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof triangle_indices, triangle_indices, GL_STATIC_DRAW);
 
   unsigned int verticies_vbo;
@@ -136,12 +130,7 @@ void initialize(struct context* context) {
   glBindBuffer(GL_ARRAY_BUFFER, verticies_vbo);
   glBufferData(GL_ARRAY_BUFFER, sizeof vertices, vertices, GL_STATIC_DRAW);
 
-  const GLboolean va_is_normalized = GL_FALSE;
-  const unsigned int va_stride = 0;
-  const void* va_start_offset = NULL;
-  const unsigned int vertex_size = 2;
-  // Note: 'ebo' and 'vbo' are bound.
-  glVertexAttribPointer(verticies_index, vertex_size, GL_FLOAT, va_is_normalized, va_stride, va_start_offset);
+  glVertexAttribPointer(verticies_index, 2, GL_FLOAT, GL_FALSE, 0, NULL);
   glEnableVertexAttribArray(verticies_index);
 
   unsigned int colors_vbo;
@@ -166,8 +155,6 @@ void initialize(struct context* context) {
   glAttachShader(context->shader_program, vertex_shader);
   glAttachShader(context->shader_program, fragment_shader);
   link_shader_program(context->shader_program);
-
-  context->blue_uniform_location = glGetUniformLocation(context->shader_program, "blue");
 }
 
 // Based on https://antongerdelan.net/opengl/glcontext2.html
