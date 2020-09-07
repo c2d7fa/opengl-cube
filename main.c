@@ -99,8 +99,10 @@ void link_shader_program(unsigned int program) {
     }
 }
 
-const unsigned int vertex_size = 2; // Number of floats needed to store each vertex in triangle
 const unsigned int triangles = 2;   // Number of triangles rendered
+
+const unsigned int verticies_index = 0;
+const unsigned int colors_index = 1;
 
 void initialize(struct context* context) {
   float vertices[] = {
@@ -108,6 +110,13 @@ void initialize(struct context* context) {
     -0.5,  0.5,
      0.5,  0.5,
      0.5, -0.5,
+  };
+
+  float vertex_colors[] = {
+    1.0, 0.2, 0.5,
+    0.7, 0.3, 0.8,
+    0.4, 0.6, 1.0,
+    1.0, 0.9, 0.2,
   };
 
   unsigned short triangle_indices[] = {
@@ -122,18 +131,26 @@ void initialize(struct context* context) {
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, context->ebo);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof triangle_indices, triangle_indices, GL_STATIC_DRAW);
 
-  unsigned int vbo;
-  glGenBuffers(1, &vbo);
-  glBindBuffer(GL_ARRAY_BUFFER, vbo);
+  unsigned int verticies_vbo;
+  glGenBuffers(1, &verticies_vbo);
+  glBindBuffer(GL_ARRAY_BUFFER, verticies_vbo);
   glBufferData(GL_ARRAY_BUFFER, sizeof vertices, vertices, GL_STATIC_DRAW);
 
-  const int index = 0;
   const GLboolean va_is_normalized = GL_FALSE;
   const unsigned int va_stride = 0;
   const void* va_start_offset = NULL;
+  const unsigned int vertex_size = 2;
   // Note: 'ebo' and 'vbo' are bound.
-  glVertexAttribPointer(index, vertex_size, GL_FLOAT, va_is_normalized, va_stride, va_start_offset);
-  glEnableVertexAttribArray(index);
+  glVertexAttribPointer(verticies_index, vertex_size, GL_FLOAT, va_is_normalized, va_stride, va_start_offset);
+  glEnableVertexAttribArray(verticies_index);
+
+  unsigned int colors_vbo;
+  glGenBuffers(1, &colors_vbo);
+  glBindBuffer(GL_ARRAY_BUFFER, colors_vbo);
+  glBufferData(GL_ARRAY_BUFFER, sizeof vertex_colors, vertex_colors, GL_STATIC_DRAW);
+
+  glVertexAttribPointer(colors_index, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+  glEnableVertexAttribArray(colors_index);
 
   // Unbind to prevent accidental modification
   glBindVertexArray(0);
@@ -175,14 +192,6 @@ void update_fps(struct context* context) {
     }
 }
 
-float animation(float duration) {
-    unsigned long int ms_time = glfwGetTime() * 1000;
-    unsigned int ms_duration = duration * 1000;
-    float ms_position = ms_time % ms_duration;
-
-    return ms_position / ms_duration;
-}
-
 void render(struct context* context) {
   update_fps(context);
 
@@ -193,7 +202,6 @@ void render(struct context* context) {
   }
 
   glUseProgram(context->shader_program);
-  glUniform1f(context->blue_uniform_location, fabs(0.5 - animation(4.0)) * 2.0);
 
   glBindVertexArray(context->vao);
   glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_SHORT, NULL);
