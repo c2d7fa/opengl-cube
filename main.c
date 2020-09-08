@@ -108,11 +108,10 @@ void initialize(struct context* context) {
   float vertices[] = {
     -1.0, -0.5,  2.0,
     -1.0,  0.5,  2.0,
-     0.0,  0.5,  1.0,
-     0.0, -0.5,  1.0,
 
      0.0,  0.5,  1.0,
      0.0, -0.5,  1.0,
+     
      1.0, -0.5,  2.0,
      1.0,  0.5,  2.0,
   };
@@ -120,21 +119,20 @@ void initialize(struct context* context) {
   float vertex_colors[] = {
     1.0, 0.2, 0.5,
     0.7, 0.3, 0.8,
+
     0.4, 0.6, 1.0,
     1.0, 0.9, 0.2,
 
-    1.0, 0.2, 0.5,
     0.7, 0.3, 0.8,
-    0.4, 0.6, 1.0,
-    1.0, 0.9, 0.2,
+    1.0, 0.2, 0.5,
   };
 
   unsigned short triangle_indices[] = {
       0, 1, 2,
       0, 3, 2,
 
-      4, 5, 6,
-      6, 7, 4,
+      2, 3, 4,
+      4, 5, 2,
   };
 
   glGenVertexArrays(1, &context->vao);
