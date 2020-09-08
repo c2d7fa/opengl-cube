@@ -220,7 +220,10 @@ void render(struct context* context) {
 
   glUseProgram(context->shader_program);
 
-  const struct mat4f transform = mat4f_perspective();
+  const struct mat4f transform = mat4f_multiply(
+      mat4f_perspective(),
+      mat4f_rotate_y(2 * pi * animation(4))
+  );
   glUniformMatrix4fv(context->uniform_transform, 1, GL_FALSE, mat4f_gl(transform));
 
   glBindVertexArray(context->vao);
