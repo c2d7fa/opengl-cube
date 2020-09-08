@@ -99,20 +99,30 @@ void link_shader_program(unsigned int program) {
     }
 }
 
-const unsigned int triangles = 2;   // Number of triangles rendered
+const unsigned int triangles = 4;   // Number of triangles rendered
 
 const unsigned int verticies_index = 0;
 const unsigned int colors_index = 1;
 
 void initialize(struct context* context) {
   float vertices[] = {
-    -0.5, -0.5,
-    -0.5,  0.5,
-     0.5,  0.5,
-     0.5, -0.5,
+    -1.0, -0.5,  2.0,
+    -1.0,  0.5,  2.0,
+     0.0,  0.5,  1.0,
+     0.0, -0.5,  1.0,
+
+     0.0,  0.5,  1.0,
+     0.0, -0.5,  1.0,
+     1.0, -0.5,  2.0,
+     1.0,  0.5,  2.0,
   };
 
   float vertex_colors[] = {
+    1.0, 0.2, 0.5,
+    0.7, 0.3, 0.8,
+    0.4, 0.6, 1.0,
+    1.0, 0.9, 0.2,
+
     1.0, 0.2, 0.5,
     0.7, 0.3, 0.8,
     0.4, 0.6, 1.0,
@@ -122,6 +132,9 @@ void initialize(struct context* context) {
   unsigned short triangle_indices[] = {
       0, 1, 2,
       0, 3, 2,
+
+      4, 5, 6,
+      6, 7, 4,
   };
 
   glGenVertexArrays(1, &context->vao);
@@ -137,7 +150,7 @@ void initialize(struct context* context) {
   glBindBuffer(GL_ARRAY_BUFFER, verticies_vbo);
   glBufferData(GL_ARRAY_BUFFER, sizeof vertices, vertices, GL_STATIC_DRAW);
 
-  glVertexAttribPointer(verticies_index, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+  glVertexAttribPointer(verticies_index, 3, GL_FLOAT, GL_FALSE, 0, NULL);
   glEnableVertexAttribArray(verticies_index);
 
   unsigned int colors_vbo;
@@ -207,10 +220,7 @@ void render(struct context* context) {
 
   glUseProgram(context->shader_program);
 
-  const struct mat4f transform = mat4f_multiply(
-      mat4f_rotate_z(2 * pi * animation(4)),
-      mat4f_scale(0.5 + fabs(0.5 - animation(2)) * 2, 1, 1)
-  );
+  const struct mat4f transform = mat4f_perspective();
   glUniformMatrix4fv(context->uniform_transform, 1, GL_FALSE, mat4f_gl(transform));
 
   glBindVertexArray(context->vao);
