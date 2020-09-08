@@ -4,6 +4,9 @@
 
 #ifdef _WIN32
     #define GLEW_STATIC
+    #pragma comment(lib, "glew32s.lib")
+    #pragma comment(lib, "glfw3.lib")
+    #pragma comment(lib, "opengl32.lib")
 #endif
 
 #include <GL/glew.h>
