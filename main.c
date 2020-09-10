@@ -99,40 +99,62 @@ void link_shader_program(unsigned int program) {
     }
 }
 
-const unsigned int triangles = 4;   // Number of triangles rendered
+const unsigned int triangles = 6 * 2;   // Number of triangles rendered
 
 const unsigned int verticies_index = 0;
 const unsigned int colors_index = 1;
 
 void initialize(struct context* context) {
   float vertices[] = {
-    -1.0, -0.5, -0.5,
-    -1.0,  0.5, -0.5,
+    // Front face
+     0.5,  0.5,  0.5,
+    -0.5,  0.5,  0.5,
+    -0.5, -0.5,  0.5,
+     0.5, -0.5,  0.5,
 
-     0.0,  0.5,  0.5,
-     0.0, -0.5,  0.5,
-     
-     1.0, -0.5, -0.5,
-     1.0,  0.5, -0.5,
+    // Back face
+     0.5,  0.5, -0.5,
+    -0.5,  0.5, -0.5,
+    -0.5, -0.5, -0.5,
+     0.5, -0.5, -0.5,
   };
 
   float vertex_colors[] = {
     1.0, 0.2, 0.5,
-    0.7, 0.3, 0.8,
-
-    0.4, 0.6, 1.0,
     1.0, 0.9, 0.2,
-
     0.7, 0.3, 0.8,
-    1.0, 0.2, 0.5,
+    0.5, 0.3, 1.0,
+
+    0.2, 0.6, 1.0,
+    0.6, 1.0, 0.4,
+    0.6, 0.8, 0.8,
+    0.8, 0.6, 0.3,
   };
 
   unsigned short triangle_indices[] = {
+      // Front
       0, 1, 2,
-      0, 3, 2,
+      2, 3, 0,
 
-      2, 3, 4,
-      4, 5, 2,
+      // Right
+      0, 3, 7,
+      7, 4, 0,
+
+      // Bottom
+      2, 6, 7,
+      7, 3, 2,
+
+      // Left
+      1, 5, 6,
+      6, 2, 1,
+
+      // Back
+      4, 7, 6,
+      6, 5, 4,
+
+      // Top
+      5, 1, 0,
+      0, 4, 5,
   };
 
   glGenVertexArrays(1, &context->vao);
