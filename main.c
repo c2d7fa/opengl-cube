@@ -106,14 +106,14 @@ const unsigned int colors_index = 1;
 
 void initialize(struct context* context) {
   float vertices[] = {
-    -1.0, -0.5, -4.0,
-    -1.0,  0.5, -4.0,
+    -1.0, -0.5, -0.5,
+    -1.0,  0.5, -0.5,
 
-     0.0,  0.5, -3.0,
-     0.0, -0.5, -3.0,
+     0.0,  0.5,  0.5,
+     0.0, -0.5,  0.5,
      
-     1.0, -0.5, -4.0,
-     1.0,  0.5, -4.0,
+     1.0, -0.5, -0.5,
+     1.0,  0.5, -0.5,
   };
 
   float vertex_colors[] = {
@@ -218,10 +218,9 @@ void render(struct context* context) {
 
   glUseProgram(context->shader_program);
 
-  const struct mat4f transform = mat4f_multiply(
-      mat4f_perspective(),
-      mat4f_rotate_y(2 * pi * animation(4))
-  );
+  struct mat4f transform = mat4f_perspective();
+  transform = mat4f_multiply(transform, mat4f_translation(0, 0, -3, 0));
+  transform = mat4f_multiply(transform, mat4f_rotate_y(2 * pi * animation(4)));
   glUniformMatrix4fv(context->uniform_transform, 1, GL_FALSE, mat4f_gl(transform));
 
   glBindVertexArray(context->vao);

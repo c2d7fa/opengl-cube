@@ -57,6 +57,15 @@ struct mat4f mat4f_scale(float x, float y, float z) {
 	};
 }
 
+struct mat4f mat4f_translation(float x, float y, float z) {
+	return (struct mat4f) {
+		1, 0, 0, 0,
+		0, 1, 0, 0,
+		0, 0, 1, 0,
+		x, y, z, 1,
+	};
+}
+
 struct mat4f mat4f_rotate_z(float theta) {
 	return (struct mat4f) {
 		 cos(theta), sin(theta), 0, 0,
@@ -80,10 +89,10 @@ struct mat4f mat4f_perspective() {
 	// really understand. I just copied the final result.
 
 	const float
-		r = 2,  // Half of the viewport width (at the near plane)
-		t = 2,  // Half of the viewport height (at the near plane)
+		r = 1,  // Half of the viewport width (at the near plane)
+		t = 1,  // Half of the viewport height (at the near plane)
 		n = 1,  // Distance to near clipping plane
-		f = 10; // Distance to far clipping plane
+		f = 5;  // Distance to far clipping plane
 
 	// Note that while n and f are given as positive integers above,
 	// the camera is looking in the negative direction. So we will see
