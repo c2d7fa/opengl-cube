@@ -1,6 +1,6 @@
 # Rotating Cube in OpenGL 4
 
-<p align="center"><img src="https://raw.githubusercontent.com/c2d7fa/opengl-cube/master/screenshot.png"/></p>
+<p align="center"><img src="https://raw.githubusercontent.com/c2d7fa/opengl-cube/master/screenshot.png" width="400"/></p>
 
 This is a simple OpenGL 4.5 demo using GLEW and GLFW. It is written in pure C, and does not depend on any libraries for matrix manipulation.
 
