@@ -98,8 +98,8 @@ struct mat4f mat4f_perspective() {
 	// really understand. I just copied the final result.
 
 	const float
-		r = 1,  // Half of the viewport width (at the near plane)
-		t = 1,  // Half of the viewport height (at the near plane)
+		r = 0.5,  // Half of the viewport width (at the near plane)
+		t = 0.5,  // Half of the viewport height (at the near plane)
 		n = 1,  // Distance to near clipping plane
 		f = 5;  // Distance to far clipping plane
 
