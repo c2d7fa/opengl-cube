@@ -77,13 +77,22 @@ struct mat4f mat4f_rotate_y(float theta) {
 
 struct mat4f mat4f_perspective() {
 	// Based on http://www.songho.ca/opengl/gl_projectionmatrix.html, which I don't
-	// really understand. I'm not confident that this is correct.
+	// really understand. I just copied the final result.
+
+	const float
+		r = 2,  // Half of the viewport width (at the near plane)
+		t = 2,  // Half of the viewport height (at the near plane)
+		n = 1,  // Distance to near clipping plane
+		f = 10; // Distance to far clipping plane
+
+	// Note that while n and f are given as positive integers above,
+	// the camera is looking in the negative direction. So we will see
+	// stuff between z = -n and z = -f.
+
 	return (struct mat4f) {
-		1,  0,  0,  0,
-		0,  1,  0,  0,
-		0,  0,  0,  1,
-		0,  0, -1,  0,
+		n / r, 0, 0, 0,
+		0, n / t, 0, 0,
+		0, 0, (-f - n) / (f - n), -1,
+		0, 0, (2 * f * n) / (n - f), 0,
 	};
 }
-
-

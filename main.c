@@ -106,14 +106,14 @@ const unsigned int colors_index = 1;
 
 void initialize(struct context* context) {
   float vertices[] = {
-    -1.0, -0.5,  2.0,
-    -1.0,  0.5,  2.0,
+    -1.0, -0.5, -4.0,
+    -1.0,  0.5, -4.0,
 
-     0.0,  0.5,  1.0,
-     0.0, -0.5,  1.0,
+     0.0,  0.5, -3.0,
+     0.0, -0.5, -3.0,
      
-     1.0, -0.5,  2.0,
-     1.0,  0.5,  2.0,
+     1.0, -0.5, -4.0,
+     1.0,  0.5, -4.0,
   };
 
   float vertex_colors[] = {
