@@ -84,6 +84,15 @@ struct mat4f mat4f_rotate_y(float theta) {
 	};
 }
 
+struct mat4f mat4f_rotate_x(float theta) {
+	return (struct mat4f) {
+		1, 0, 0, 0,
+		0, cos(theta), sin(theta), 0,
+		0, -sin(theta), cos(theta), 0,
+		0, 0, 0, 1,
+	};
+}
+
 struct mat4f mat4f_perspective() {
 	// Based on http://www.songho.ca/opengl/gl_projectionmatrix.html, which I don't
 	// really understand. I just copied the final result.
