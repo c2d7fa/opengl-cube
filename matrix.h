@@ -13,8 +13,11 @@ struct mat4f {
 		x14, x24, x34, x44;
 };
 
-float* mat4f_gl(struct mat4f m) {
-	return &m.x11;
+// Return the given matrix in a format understood by OpenGL.
+float* mat4f_gl(struct mat4f* m) {
+	// Since it's already in colum-major order, we just return the address of the
+	// first element.
+	return &m->x11;
 }
 
 struct mat4f mat4f_identity = {

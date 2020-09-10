@@ -247,7 +247,7 @@ void render(struct context* context) {
   transform = mat4f_multiply(transform, mat4f_translation(0, 0, -3));
   transform = mat4f_multiply(transform, mat4f_rotate_x(0.15 * pi));
   transform = mat4f_multiply(transform, mat4f_rotate_y(2 * pi * animation(4)));
-  glUniformMatrix4fv(context->uniform_transform, 1, GL_FALSE, mat4f_gl(transform));
+  glUniformMatrix4fv(context->uniform_transform, 1, GL_FALSE, mat4f_gl(&transform));
 
   glBindVertexArray(context->vao);
   glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_SHORT, NULL);
