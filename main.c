@@ -105,6 +105,8 @@ const unsigned int verticies_index = 0;
 const unsigned int colors_index = 1;
 
 void initialize(struct context* context) {
+  glEnable(GL_DEPTH_TEST);
+
   float vertices[] = {
     // Front face
      0.5,  0.5,  0.5,
