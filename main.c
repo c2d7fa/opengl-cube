@@ -122,7 +122,7 @@ void initialize(struct context* context) {
   };
 
   float vertex_colors[] = {
-    1.0, 0.2, 0.5,
+    1.0, 0.4, 0.6,
     1.0, 0.9, 0.2,
     0.7, 0.3, 0.8,
     0.5, 0.3, 1.0,
@@ -130,7 +130,7 @@ void initialize(struct context* context) {
     0.2, 0.6, 1.0,
     0.6, 1.0, 0.4,
     0.6, 0.8, 0.8,
-    0.8, 0.6, 0.3,
+    0.4, 0.8, 0.8,
   };
 
   unsigned short triangle_indices[] = {
